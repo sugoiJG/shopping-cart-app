@@ -1,5 +1,7 @@
 /* Create an array named products which you will use to add all of your product object literals that you create in the next step. */
 
+const products = [];
+
 /* Create 3 or more product objects using object literal notation 
    Each product should include five properties
    - name: name of product (string)
@@ -9,6 +11,34 @@
    - image: picture of product (url string)
 */
 
+const cherry = {
+  name: "Cherry",
+  price: 2.99,
+  quantity: 0,
+  productId: 1,
+  image: "/starter/src/images/cherry.jpg"
+};
+
+const orange = {
+  name: "Orange",
+  price: 1.49,
+  quantity: 0,
+  productId: 2,
+  image: "/starter/src/images/orange.jpg"
+};
+
+const strawberry = {
+  name: "Strawberry",
+  price: 3.49,
+  quantity: 0,
+  productId: 3,
+  image: "/starter/src/images/strawberry.jpg"
+};
+
+// Adding product objects to the products array
+products.push(cherry, orange, strawberry);
+
+
 /* Images provided in /images folder. All images from Unsplash.com
    - cherry.jpg by Mae Mu
    - orange.jpg by Mae Mu
@@ -16,6 +46,7 @@
 */
 
 /* Declare an empty array named cart to hold the items in the cart */
+const cart = [];
 
 /* Create a function named addProductToCart that takes in the product productId as an argument
   - addProductToCart should get the correct product based on the productId
@@ -23,10 +54,41 @@
   - if the product is not already in the cart, add it to the cart
 */
 
+const addProductToCart = (productId) => {
+
+  const product = products.find((product) => product.productId === productId);
+
+  const cartProduct = cart.find((cartItem) => cartItem.productId === productId);
+
+  if (product) {
+    product.quantity += 1;
+
+    if (!cartProduct) {
+      cart.push(product);
+    }
+
+    console.log("Product added to cart");
+  } else {
+    console.log("Product not found")
+  }
+}
+
 /* Create a function named increaseQuantity that takes in the productId as an argument
   - increaseQuantity should get the correct product based on the productId
   - increaseQuantity should then increase the product's quantity
 */
+
+const increaseQuantity = (productId) => {
+  const product = products.find((product) => product.productId === productId);
+
+  if (product) {
+    product.quantity += 1;
+    console.log("Quantity increased for product:", product.name);
+  } else {
+    console.log("Product not found.");
+  }
+};
+
 
 /* Create a function named decreaseQuantity that takes in the productId as an argument
   - decreaseQuantity should get the correct product based on the productId
@@ -34,25 +96,153 @@
   - if the function decreases the quantity to 0, the product is removed from the cart
 */
 
+const decreaseQuantity = (productId) => {
+  const product = products.find((product) => product.productId === productId);
+
+  if (product) {
+    if (product.quantity > 0) {
+      product.quantity -= 1;
+      console.log("Quantity decreased for product:", product.name);
+      if (product.quantity === 0) {
+        const index = cart.findIndex((cartItem) => cartItem.productId === productId);
+        if (index !== -1) {
+          cart.splice(index, 1);
+          console.log("Product removed from cart:", product.name);
+        }
+      }
+    } else {
+      console.log("Product quantity is already 0.");
+    }
+  } else {
+    console.log("Product not found.");
+  }
+};
+
+
 /* Create a function named removeProductFromCart that takes in the productId as an argument
   - removeProductFromCart should get the correct product based on the productId
   - removeProductFromCart should update the product quantity to 0
   - removeProductFromCart should remove the product from the cart
 */
 
+const removeProductFromCart = (productId) => {
+  const product = products.find((product) => product.productId === productId);
+
+  if (product) {
+    product.quantity = 0;
+    const index = cart.findIndex((cartItem) => cartItem.productId === productId);
+    if (index !== -1) {
+      cart.splice(index, 1);
+      console.log("Product removed from cart:", product.name);
+    }
+  } else {
+    console.log("Product not found.");
+  }
+};
+
+
+
 /* Create a function named cartTotal that has no parameters
   - cartTotal should iterate through the cart to get the total of all products
   - cartTotal should return the sum of the products in the cart
 */
+const cartTotal = () => {
+  let total = 0;
+  for (const product of cart) {
+    total += product.price * product.quantity;
+  }
+  return total;
+};
+
 
 /* Create a function called emptyCart that empties the products from the cart */
+
+const emptyCart = () => {
+  cart.length = 0;
+  console.log("Cart emptied successfully.");
+};
+
 
 /* Create a function named pay that takes in an amount as an argument
   - pay will return a negative number if there is a remaining balance
   - pay will return a positive number if money should be returned to customer
 */
 
-/* Place stand out suggestions here (stand out suggestions can be found at the bottom of the project rubric.)*/
+const pay = (amount) => {
+  const cartTotal = calculateCartTotal();
+  const balance = amount - cartTotal;
+
+  if (balance < 0) {
+    console.log("Remaining balance: -$" + Math.abs(balance));
+    return balance;
+  } else if (balance > 0) {
+    console.log("Change due: $" + balance);
+    return balance;
+  } else {
+    console.log("Payment complete. No change.");
+    return balance;
+  }
+};
+
+const calculateCartTotal = () => {
+  let total = 0;
+  for (const product of cart) {
+    total += product.price * product.quantity;
+  }
+  return total;
+};
+
+
+
+function dropCart(){
+  let shoppingCart = document.querySelector('.empty-btn');
+  let div = document.createElement("button");
+  div.classList.add("empty");
+  div.innerHTML =`Empty Cart`;
+  shoppingCart.append(div);
+}
+dropCart();
+
+document.querySelector('.empty-btn').addEventListener('click', (e) => {
+  if (e.target.classList.contains('empty')){
+      emptyCart();
+      drawCart();
+      drawCheckout();
+  }
+});
+/* End all items from cart */
+
+/* Begin currency converter */
+function currencyBuilder(){
+  let currencyPicker = document.querySelector('.currency-selector');
+  let select = document.createElement("select");
+  select.classList.add("currency-select");
+  select.innerHTML = `<option value="USD">USD</option>
+                      <option value="EUR">EUR</option>
+                      <option value="YEN">YEN</option>`;
+  currencyPicker.append(select);
+}
+currencyBuilder();
+
+document.querySelector('.currency-select').addEventListener('change', function handleChange(event) {
+  switch(event.target.value){
+      case 'EUR':
+          currencySymbol = '€';
+          break;
+      case 'YEN':
+          currencySymbol = '¥';
+          break;
+      default:
+          currencySymbol = '$';
+          break;
+  }
+
+  currency(event.target.value);
+  drawProducts();
+  drawCart();
+  drawCheckout();
+});
+/* End currency converter */
 
 
 /* The following is for running unit tests. 
@@ -71,6 +261,5 @@ module.exports = {
    cartTotal,
    pay, 
    emptyCart,
-   /* Uncomment the following line if completing the currency converter bonus */
-   // currency
+   currency,
 }
